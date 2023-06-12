@@ -7,16 +7,51 @@ type MarkdownPreviewProps = {
   className: 'preview'
 } & ReactMarkdownProps
 
+const defaultMarkdown = `
+# Heading level 1
+## Heading level 2
+> blockquote
+**bold text**
+1. First item
+2. Second item
+3. Third item
+
+\`code\`
+
+\`\`\`
+<html>
+  <head>
+  codeblocks
+  </head>
+</html>
+\`\`\`
+
+[My Github](https://github.com/notdaan)
+
+![notdaan](image.jpg)
+`
+
 export default class Header extends React.Component{
   constructor(props){
     super(props)
     this.state = {
       markdown: "",
+      defaultMarkdown: defaultMarkdown,
       editorToggle: false,
+      firstload: true
     };
   }
-  updateMarkdown(markdown) {
-    this.setState({markdown});
+
+  componentDidMount() {
+    console.log("did mount")
+    this.updateMarkdown(defaultMarkdown)
+  }
+
+  updateMarkdown(data) {
+    console.log("update markdown")
+    this.setState({
+      markdown: data,
+    });
   };
   
   ToggleEditor(editorToggle) {
@@ -31,6 +66,8 @@ export default class Header extends React.Component{
     })
   }
 
+
+//a header (H1 size), a sub header (H2 size), a link, inline code, a code block, a list item, a blockquote, an image, and bolded text
     render(){
       return (
         <body>
@@ -47,11 +84,12 @@ export default class Header extends React.Component{
               </div>
               <div className={'text-area-' + (this.state.editorToggle ? 'close' : 'open')}>
                 <textarea 
-                id='input' 
+                id='editor' 
                 className='input' 
-                value={this.state.markdown} 
+                value={(this.state.firstload ? this.state.defaultMarkdown : this.state.markdown)}
                 onChange={(element) => {
                   this.updateMarkdown(element.target.value)
+                  //console.log("change")
                 }}
                 ></textarea>
               </div>
@@ -59,7 +97,7 @@ export default class Header extends React.Component{
             <div className='line-break'></div>
             <div className='preview-container'>
                 <h1 className='body-heading'>Preview</h1>
-                <div className='text-area' data-color-mode="light">
+                <div id='preview' className='text-area' data-color-mode="light">
                   <MarkdownPreview source={this.state.markdown} />
                 </div>
             </div>
