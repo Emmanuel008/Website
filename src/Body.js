@@ -1,12 +1,11 @@
 import React from 'react';
-import MarkdownPreview from "@uiw/react-markdown-preview";
-import { ReactMarkdownProps } from 'react-markdown';
+import { marked } from 'marked';
 import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 
-type MarkdownPreviewProps = {
-  className: 'preview'
-} & ReactMarkdownProps
-
+marked.use({
+  gfm: true,
+  breaks: true,
+})
 const defaultMarkdown = `
 # Heading level 1
 ## Heading level 2
@@ -36,7 +35,8 @@ export default class Header extends React.Component{
     super(props)
     this.state = {
       markdown: "",
-      defaultMarkdown: defaultMarkdown,
+      input: "",
+      defaultinput: defaultMarkdown,
       editorToggle: false,
       firstload: true
     };
@@ -49,25 +49,30 @@ export default class Header extends React.Component{
 
   updateMarkdown(data) {
     console.log("update markdown")
+    if(this.state.firstload) {
+      this.state.firstload = false
+    }
+    var md = marked.parse(data)
     this.setState({
-      markdown: data,
+      input: data,
+      markdown: md,
     });
+    console.log(this.state.markdown)
   };
-  
+
   ToggleEditor(editorToggle) {
     this.setState({
       editorToggle: !this.state.editorToggle
     })
-  }
+  };
 
   refreshMarkdown(markdown) {
     this.setState({
+      input: "",
       markdown: "",
     })
-  }
-
-
-//a header (H1 size), a sub header (H2 size), a link, inline code, a code block, a list item, a blockquote, an image, and bolded text
+  };
+  
     render(){
       return (
         <body>
@@ -86,10 +91,9 @@ export default class Header extends React.Component{
                 <textarea 
                 id='editor' 
                 className='input' 
-                value={(this.state.firstload ? this.state.defaultMarkdown : this.state.markdown)}
+                value={(this.state.firstload ? this.state.defaultinput : this.state.input)}
                 onChange={(element) => {
                   this.updateMarkdown(element.target.value)
-                  //console.log("change")
                 }}
                 ></textarea>
               </div>
@@ -97,8 +101,7 @@ export default class Header extends React.Component{
             <div className='line-break'></div>
             <div className='preview-container'>
                 <h1 className='body-heading'>Preview</h1>
-                <div id='preview' className='text-area' data-color-mode="light">
-                  <MarkdownPreview source={this.state.markdown} />
+                <div id='preview' className='text-area' data-color-mode="light" dangerouslySetInnerHTML={{ __html: marked.parse(this.state.markdown)}}>
                 </div>
             </div>
           </div>

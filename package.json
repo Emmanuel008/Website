@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@uiw/react-markdown-preview": "^4.1.7",
     "bootstrap": "^5.2.3",
+    "marked": "^5.1.0",
     "mdb-react-ui-kit": "^5.1.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.0",
